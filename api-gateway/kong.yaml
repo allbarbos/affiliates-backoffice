@@ -1,0 +1,78 @@
+_format_version: "1.1"
+
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid
+      echo_downstream: true
+  - name: file-log
+    config:
+      path: /dev/stdout
+      custom_fields_by_lua:
+        message: |
+          return "details of request " ..
+            kong.response.get_status() ..
+            " " .. kong.request.get_method() ..
+            " " .. kong.request.get_path() ..
+            " " .. kong.response.get_header("x-request-id")
+        details: |
+          return { 
+            service = (kong.router.get_service() and kong.router.get_service().name or ""), 
+            route = (kong.router.get_route() and kong.router.get_route().name or ""),
+            method = kong.request.get_method(),
+            status = kong.response.get_status(),
+            ["x-request-id"] = kong.response.get_header("x-request-id"),
+            uri = kong.request.get_path()
+          }
+        route: return nil
+        service: return nil
+        tries: return nil
+        response: return nil
+        request: return nil
+        latencies: return nil
+  - name: cors
+    config:
+      origins:
+        - "http://localhost:3000"
+      methods:
+        - GET
+        - POST
+      headers:
+        - x-api-key
+      exposed_headers:
+        - x-api-key
+      max_age: 3600
+
+consumers:
+  - username: afiliate-backoffice-app
+
+keyauth_credentials:
+  - consumer: afiliate-backoffice-app
+    key: 50145a3f-97cc-4fd7-be53-5b978b430936
+
+services:
+  - name: affiliates-api
+    url: http://api:3001
+    routes:
+      - name: get-batch-files
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+        strip_path: false
+        paths:
+          - /v1/affiliates/(?<affiliateID>[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})/batches($|/$)
+      - name: get-transactions
+        methods:
+          - GET
+          - OPTIONS
+        strip_path: false
+        paths:
+          - /v1/affiliates/(?<affiliateID>[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})/transactions($|/$)
+    plugins:
+      - name: key-auth
+        service: affiliates-api
+        config:
+          key_names:
+            - x-api-key

@@ -1,6 +1,29 @@
 version: "3"
 
 services:
+  kong:
+    build:
+      context: api-gateway
+      dockerfile: Dockerfile
+    environment:
+      KONG_DATABASE: "off"
+      KONG_PROXY_ACCESS_LOG: "off"
+      KONG_LOG_LEVEL: info
+      KONG_PLUGINS: bundled
+      KONG_DECLARATIVE_CONFIG: /tmp/kong.yaml
+    ports:
+      - "8000:8000"
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      api:
+        condition: service_healthy
+
   api:
     build:
       context: backend
