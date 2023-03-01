@@ -2,6 +2,8 @@ mock:
 	mockgen -source=./pkg/log/logger.go -destination=./pkg/log/mocks/logger.go
 	mockgen -source=./internal/batch/repository.go -destination=./internal/batch/mocks/repository.go
 	mockgen -source=./internal/batch/service.go -destination=./internal/batch/mocks/service.go
+	mockgen -source=./internal/transaction/service.go -destination=./internal/transaction/mocks/service.go
+	mockgen -source=./internal/transaction/repository.go -destination=./internal/transaction/mocks/repository.go
 build:
 	go build -mod=vendor -o bin/api ./cmd/api/main.go
 fmt:
