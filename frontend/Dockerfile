@@ -1,6 +1,6 @@
 FROM node:18-alpine as build
 WORKDIR /app
-COPY package*.json ./x
+COPY package*.json ./
 RUN yarn
 COPY . ./
 RUN npm run build
