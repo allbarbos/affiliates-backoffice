@@ -1,0 +1,197 @@
+openapi: 3.0.1
+info:
+  title: Affiliate API
+  version: "1.0"
+servers:
+  - url: http://localhost:8000/v1
+paths:
+  /affiliates/{affiliateID}/batches:
+    get:
+      tags:
+        - Batches
+      summary: List batch files
+      description: List files imported from an affiliate
+      parameters:
+        - name: affiliateID
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchFilesResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                errors:
+                  $ref: "#/components/examples/ErrorsResponse"
+    post:
+      tags:
+        - Batches
+      summary: Save batch file
+      description: Save an affiliate batch file
+      parameters:
+        - name: affiliateID
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+              format: binary
+      responses:
+        202:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchCreateResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                errors:
+                  $ref: "#/components/examples/ErrorsResponse"
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                errors:
+                  $ref: "#/components/examples/ErrorsResponse"
+
+  /affiliates/{affiliateID}/transactions:
+    get:
+      tags:
+        - Transactions
+      summary: List transactions
+      description: Lists an affiliate's transactions
+      parameters:
+        - name: affiliateID
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - name: x-api-key
+          in: header
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionsResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                errors:
+                  $ref: "#/components/examples/ErrorsResponse"
+components:
+  examples:
+    ErrorsResponse:
+      summary: "Invalid attachment"
+      value:
+        errors:
+          - Unable to receive attachment
+          - Attachment cannot be empty
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+    BatchCreateResponse:
+      type: object
+      properties:
+        batchID:
+          type: string
+          format: uuid
+    BatchFilesResponse:
+      type: object
+      properties:
+        batchID:
+          type: string
+          format: uuid
+        affiliateID:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: CREATED
+        errors:
+          type: object
+          properties:
+            row:
+              type: integer
+              example: 1
+            errors:
+              type: array
+              items:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+    TransactionsResponse:
+      type: object
+      properties:
+        batchID:
+          type: string
+          format: uuid
+        affiliateID:
+          type: string
+          format: uuid
+        type:
+          type: integer
+          example: 1
+        date:
+          type: string
+          format: date-time
+        product:
+          type: string
+        value:
+          type: integer
+          format: float
+          example: 150.34
+        seller:
+          type: string

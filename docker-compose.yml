@@ -75,3 +75,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  devportal:
+    image: swaggerapi/swagger-ui
+    ports:
+      - '9002:8080'
+    volumes: 
+      - ./openapi.yaml:/tmp/openapi.yaml
+    environment:
+      SWAGGER_JSON: /tmp/openapi.yaml
