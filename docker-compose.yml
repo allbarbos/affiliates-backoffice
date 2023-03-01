@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: backend
+      dockerfile: build/Dockerfile.api
+    env_file: backend/.env
+    healthcheck:
+      test: wget http://localhost:3001/health || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  worker:
+    build:
+      context: backend
+      dockerfile: build/Dockerfile.worker
+    env_file: backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=backoffice_db
+    ports:
+      - '5432:5432'
+    volumes: 
+      - /pgdt:/var/lib/postgresql/data
+      - ./backend/internal/database/sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

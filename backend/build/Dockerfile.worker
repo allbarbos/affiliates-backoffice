@@ -1,0 +1,5 @@
+FROM golang:1.20-alpine AS builder
+RUN apk add --update --no-cache make
+WORKDIR /go/affiliates-backoffice
+COPY . .
+CMD ["go", "run", "./cmd/worker/main.go"]
