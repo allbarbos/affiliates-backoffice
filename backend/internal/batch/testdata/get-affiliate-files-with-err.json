@@ -1,0 +1,16 @@
+[
+    {
+        "id": "4b1362ba-b443-43b4-b057-0d5431a9bbcb",
+        "affiliateID": "ca226967-6b4a-4461-bf16-ab0108f87380",
+        "status": "CREATED",
+        "errors": [
+            {
+                "row": 9,
+                "errors": [
+                    "number of columns is different from 85"
+                ]
+            }
+        ],
+        "createdAt": "2023-02-26T22:00:16.616853-03:00"
+    }
+]
