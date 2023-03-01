@@ -39,6 +39,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 	go.uber.org/zap v1.24.0
+	golang.org/x/exp v0.0.0-20230224173230-c95f2b4c22f2
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.4.8
 	gorm.io/gorm v1.24.5
