@@ -1,3 +1,6 @@
+mock:
+	mockgen -source=./pkg/log/logger.go -destination=./pkg/log/mocks/logger.go
+	mockgen -source=./internal/batch/repository.go -destination=./internal/batch/mocks/repository.go
 build:
 	go build -mod=vendor -o bin/api ./cmd/api/main.go
 fmt:
