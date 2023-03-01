@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+  front:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      kong:
+        condition: service_healthy
+
   kong:
     build:
       context: api-gateway
